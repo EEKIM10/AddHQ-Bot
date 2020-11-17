@@ -4,6 +4,7 @@ import discord
 import aiohttp
 import os
 from time import time_ns
+import asyncio
 
 from discord.ext import commands
 
@@ -16,8 +17,13 @@ bot = commands.Bot(
     status=discord.Status.dnd
 )
 async def fuck_deprecation_warning():
-    bot.session = aiohttp.ClientSession()
+    timeout = aiohttp.ClientTimeout(total=20)
+    bot.session = aiohttp.ClientSession(
+        timeout=timeout
+        )
 bot.loop.run_until_complete(fuck_deprecation_warning())
+bot.load_extension("cogs")
+bot.load_extension("jishaku")
 
 @bot.event
 async def on_ready():
@@ -57,3 +63,4 @@ async def docs(ctx: commands.Context):
 
 
 bot.run(os.getenv("BOT_TOKEN"))
+asyncio.get_event_loop().run_until_complete(bot.session.close())
